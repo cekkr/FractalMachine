@@ -37,11 +37,23 @@ namespace FractalMachineLib
 
             for (Pos=0; Pos< CurStr.Length; Pos++)
             {
+                var ignoredRules = new List<Rule>();
+
                 foreach(var trg in Triggers)
                 {
-                    if (CheckTrigger(trg))
+                    if (ignoredRules.IndexOf(trg.Parent) < 0)
                     {
-
+                        if (trg.Parent.Conditions.IsCompatibleWith(CurConditions))
+                        {
+                            if (CheckTrigger(trg))
+                            {
+                                trg.Parent.OnWinner.Call(trg);
+                            }
+                        }
+                        else
+                        {
+                            ignoredRules.Add(trg.Parent);
+                        }
                     }
                 }
             }
@@ -49,14 +61,21 @@ namespace FractalMachineLib
 
         #endregion
 
-        public bool CheckTrigger(Trigger trigger)
+        public bool CheckTrigger(Trigger trg)
         {
-
-            return false;
+            if(trg.Str != "")
+            {
+                return CheckString(trg.Str);
+            }
+            else
+            {
+                return trg.Checkers.Call(this);
+            }
         }
 
         public bool CheckString(string Str)
         {
+            // continue here
             return false;
         }
 
@@ -97,12 +116,20 @@ namespace FractalMachineLib
                     Dict[index] = value;
                 }
             }
+
+            public bool IsCompatibleWith(Conditions conds)
+            {
+                return true;
+            }
         }
 
         public class Rule
         {
             public string Name;
             public Reader MyReader;
+            public Conditions Conditions;
+
+            public Utils.Callbacks<Trigger> OnWinner = new Utils.Callbacks<Trigger>();
 
             public Rule(Reader Reader)
             {
@@ -122,7 +149,8 @@ namespace FractalMachineLib
         public class Trigger
         {
             public Rule Parent;
-            public string Str;
+            public string Str = "";
+            public Utils.Callbacks<Reader> Checkers = new Utils.Callbacks<Reader>();
 
             public Trigger(Rule parent)
             {
