@@ -7,17 +7,9 @@ using System.Threading.Tasks;
 namespace FractalMachineLib
 {
     public class Reader
-    {
-        public List<Rule> Rules = new List<Rule>();
-
+    {        
         public Reader()
         {
-            InitBaseRules();
-        }
-
-        public void InitBaseRules()
-        {
-            var separator = NewRule("separator");
         }
 
         #region Reading
@@ -26,18 +18,22 @@ namespace FractalMachineLib
         public int Pos;
         public Conditions CurConditions;
         internal List<Trigger> Triggers = new List<Trigger>();
+        public Piece CurPiece;
 
         public void Read(string Str)
         {
             CurStr = Str;
             CurConditions = new Conditions();
 
+            List<Piece> Pieces = new List<Piece>();
+            CurPiece = new Piece();
+
             // Make sure that triggers are well ordered
             Triggers = Triggers.OrderByDescending(o => o.Str.Length).ToList();
 
             for (Pos=0; Pos< CurStr.Length; Pos++)
             {
-                var ignoredRules = new List<Rule>();
+                var ignoredRules = new List<Interpreter.Rule>();
 
                 foreach(var trg in Triggers)
                 {
@@ -79,80 +75,19 @@ namespace FractalMachineLib
             return false;
         }
 
-        public Rule NewRule(string Name="")
-        {
-            var rule = new Rule(this);
-            rule.Name = Name;
-            Rules.Add(rule);
-            return rule;
-        }
-
         public class Piece
         {
             public string Content;
-            public int Line, Col;
-        }
-
-        public class Conditions
-        {
-            Dictionary<string, dynamic> Dict = new Dictionary<string, dynamic>();
-            Conditions Parent;
-
-            public Conditions() { }
-            public Conditions(Conditions parent)
-            {
-                Parent = parent;
-            }
-
-            public dynamic this[string index]
-            {
-                get
-                {
-                    return Dict[index];
-                }
-
-                set
-                {
-                    Dict[index] = value;
-                }
-            }
-
-            public bool IsCompatibleWith(Conditions conds)
-            {
-                return true;
-            }
-        }
-
-        public class Rule
-        {
-            public string Name;
-            public Reader MyReader;
-            public Conditions Conditions;
-
-            public Utils.Callbacks<Trigger> OnWinner = new Utils.Callbacks<Trigger>();
-
-            public Rule(Reader Reader)
-            {
-                MyReader = Reader;
-            }
-
-            public Trigger NewTrigger(string Str = "")
-            {
-                var trigger = new Trigger(this);
-                trigger.Str = Str;
-                MyReader.Triggers.Add(trigger);
-                return trigger;
-            }
-
+            public int Line=0, Col=0;
         }
 
         public class Trigger
         {
-            public Rule Parent;
+            public Interpreter.Rule Parent;
             public string Str = "";
             public Utils.Callbacks<Reader> Checkers = new Utils.Callbacks<Reader>();
 
-            public Trigger(Rule parent)
+            public Trigger(Interpreter.Rule parent)
             {
                 Parent = parent;
             }
