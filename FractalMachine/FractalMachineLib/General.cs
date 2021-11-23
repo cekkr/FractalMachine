@@ -30,7 +30,7 @@ namespace FractalMachineLib
             }
         }
 
-        public bool IsCompatibleWith(Conditions conds)
+        public bool IsCompatibleWith(Conditions conds, dynamic dogmas = null)
         {
             return true;
         }

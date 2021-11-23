@@ -19,12 +19,25 @@ namespace FractalMachineLib
         public void Init()
         {
             var separator = NewRule("separator");
+            separator.NewTrigger(" ");
+
+            var word = NewRule("word");
+            var wordStarts = word.NewTrigger();
+            wordStarts.Conditions["$rule"] = "!word"; //concept
+            wordStarts.Checkers.Add(delegate (Reader reader)
+            {
+                if (reader.CurPiece.Rule == word)
+                    return false;
+
+                var ch = reader.CurCh;
+                return false;
+            });
         }
 
         void Interpret(string Str)
         {
 
-        }
+        } 
 
         public Rule NewRule(string Name = "")
         {
@@ -38,7 +51,7 @@ namespace FractalMachineLib
         {
             public string Name;
             public Interpreter MyInter;
-            public Conditions Conditions;
+            public Conditions Conditions;            
 
             public Utils.Callbacks<Reader.Trigger> OnWinner = new Utils.Callbacks<Reader.Trigger>();
 
@@ -53,6 +66,13 @@ namespace FractalMachineLib
                 trigger.Str = Str;
                 MyInter.Reader.Triggers.Add(trigger);
                 return trigger;
+            }
+
+            public Reader.Trigger NewTrigger(Reader.Special cliche)
+            {
+                var trg = NewTrigger();
+                trg.Special = cliche;
+                return trg;
             }
 
         }

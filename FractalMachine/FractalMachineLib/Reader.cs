@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static FractalMachineLib.Utils;
 
 namespace FractalMachineLib
 {
@@ -12,12 +14,14 @@ namespace FractalMachineLib
         {
         }
 
+        internal List<Trigger> Triggers = new List<Trigger>();
+
         #region Reading
 
+        public char CurCh = '\0';
         public string CurStr;
-        public int Pos;
-        public Conditions CurConditions;
-        internal List<Trigger> Triggers = new List<Trigger>();
+        public int CurPos;
+        public Conditions CurConditions;        
         public Piece CurPiece;
 
         public void Read(string Str)
@@ -31,19 +35,22 @@ namespace FractalMachineLib
             // Make sure that triggers are well ordered
             Triggers = Triggers.OrderByDescending(o => o.Str.Length).ToList();
 
-            for (Pos=0; Pos< CurStr.Length; Pos++)
+            for (CurPos=0; CurPos< CurStr.Length; CurPos++)
             {
-                var ignoredRules = new List<Interpreter.Rule>();
+                CurCh = Str[CurPos];
+                var ignoredRules = new List<Interpreter.Rule>(); //think about it
 
+                bool noTriggersMatch = true;
                 foreach(var trg in Triggers)
                 {
                     if (ignoredRules.IndexOf(trg.Parent) < 0)
                     {
-                        if (trg.Parent.Conditions.IsCompatibleWith(CurConditions))
+                        if (trg.Parent.Conditions.IsCompatibleWith(CurConditions, new { rule = CurPiece.Rule?.Name }))
                         {
                             if (CheckTrigger(trg))
                             {
-                                trg.Parent.OnWinner.Call(trg);
+                                WinnerTrigger(trg);
+                                noTriggersMatch = false;
                             }
                         }
                         else
@@ -51,8 +58,22 @@ namespace FractalMachineLib
                             ignoredRules.Add(trg.Parent);
                         }
                     }
+
+                    // Special: NoTriggersActivated
+                    if (noTriggersMatch)
+                    {
+                        var winTrg = Triggers.Where(t => t.Special == Special.NoTriggersActivated).FirstOrDefault();
+                        if (winTrg != null)
+                            WinnerTrigger(winTrg);
+
+                    }
                 }
             }
+        }
+
+        void WinnerTrigger(Trigger trg)
+        {
+            trg.Parent.OnWinner.Call(trg);
         }
 
         #endregion
@@ -77,8 +98,15 @@ namespace FractalMachineLib
 
         public class Piece
         {
+            public Interpreter.Rule Rule;
             public string Content;
             public int Line=0, Col=0;
+        }
+
+        public enum Special
+        {
+            None,
+            NoTriggersActivated
         }
 
         public class Trigger
@@ -86,6 +114,8 @@ namespace FractalMachineLib
             public Interpreter.Rule Parent;
             public string Str = "";
             public Utils.Callbacks<Reader> Checkers = new Utils.Callbacks<Reader>();
+            public Special Special = Special.None;
+            public Conditions Conditions = new Conditions();
 
             public Trigger(Interpreter.Rule parent)
             {
