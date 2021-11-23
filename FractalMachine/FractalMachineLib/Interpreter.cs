@@ -22,15 +22,28 @@ namespace FractalMachineLib
             separator.NewTrigger(" ");
 
             var word = NewRule("word");
-            var wordStarts = word.NewTrigger();
-            wordStarts.Conditions["$rule"] = "!word"; //concept
-            wordStarts.Checkers.Add(delegate (Reader reader)
+            var wordDynTrgs = word.NewTrigger();
+            wordDynTrgs.Conditions["$rule"] = "!word"; //concept
+            wordDynTrgs.Checkers.Add(delegate (Reader reader)
             {
                 if (reader.CurPiece.Rule == word)
                     return false;
 
                 var ch = reader.CurCh;
-                return false;
+
+                if (ch == '$')
+                    return true;
+
+                return Chars.IsLecter(ch);
+            });
+
+            wordDynTrgs.Checkers.Add(delegate (Reader reader)
+            {
+                if (reader.CurPiece.Rule != word)
+                    return false;
+
+                var ch = reader.CurCh;
+                return Chars.IsLecter(ch) || Chars.IsNumber(ch);
             });
         }
 
