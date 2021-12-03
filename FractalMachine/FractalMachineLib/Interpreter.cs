@@ -18,12 +18,18 @@ namespace FractalMachineLib
 
         public void Init()
         {
+            ///
+            /// Separator
+            ///
             var separator = NewRule("separator");
             separator.NewTrigger(" ");
 
+            ///
+            /// Word
+            ///
             var word = NewRule("word");
             var wordDynTrgs = word.NewTrigger();
-            wordDynTrgs.Conditions["$rule"] = "!word"; //concept
+            //wordDynTrgs.Conditions["$rule"] = "!word"; //concept
             wordDynTrgs.Checkers.Add(delegate (Reader reader)
             {
                 if (reader.CurPiece.Rule == word)
@@ -45,11 +51,20 @@ namespace FractalMachineLib
                 var ch = reader.CurCh;
                 return Chars.IsLecter(ch) || Chars.IsNumber(ch);
             });
+
+            ///
+            /// String
+            ///
+            // proof of concept
+            var ruleString = NewRule("string");
+            var trgString = ruleString.NewTrigger();
+            trgString.Str = "'";
+            // works on conditions
         }
 
         void Interpret(string Str)
         {
-
+            Reader.Read(Str);
         } 
 
         public Rule NewRule(string Name = "")
