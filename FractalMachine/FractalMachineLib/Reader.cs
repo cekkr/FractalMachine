@@ -49,6 +49,7 @@ namespace FractalMachineLib
                         {
                             if (CheckTrigger(trg))
                             {
+                                CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
                                 WinnerTrigger(trg);
                                 noTriggersMatch = false;
                             }

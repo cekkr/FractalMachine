@@ -60,6 +60,7 @@ namespace FractalMachineLib
             var trgString = ruleString.NewTrigger();
             trgString.Str = "'";
             // works on conditions
+            ruleString.Conditions["!string"] = Conditions.Status.Toggle;
         }
 
         void Interpret(string Str)

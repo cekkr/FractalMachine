@@ -6,33 +6,5 @@ using System.Threading.Tasks;
 
 namespace FractalMachineLib
 {
-    public class Conditions
-    {
-        Dictionary<string, dynamic> Dict = new Dictionary<string, dynamic>();
-        Conditions Parent;
-
-        public Conditions() { }
-        public Conditions(Conditions parent)
-        {
-            Parent = parent;
-        }
-
-        public dynamic this[string index]
-        {
-            get
-            {
-                return Dict[index];
-            }
-
-            set
-            {
-                Dict[index] = value;
-            }
-        }
-
-        public bool IsCompatibleWith(Conditions conds, dynamic dogmas = null)
-        {
-            return true;
-        }
-    }
+    // it could be empty, but intrinsically full of brainstorms
 }
