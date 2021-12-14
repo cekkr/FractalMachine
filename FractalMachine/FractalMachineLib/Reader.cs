@@ -43,30 +43,34 @@ namespace FractalMachineLib
                 bool noTriggersMatch = true;
                 foreach(var trg in Triggers)
                 {
-                    if (ignoredRules.IndexOf(trg.Parent) < 0)
+                    if (trg.Enabled)
                     {
-                        if (trg.Parent.Conditions.IsCompatibleWith(CurConditions, new { rule = CurPiece.Rule?.Name }))
+                        // serve a: boh (approfondisci)
+                        if (ignoredRules.IndexOf(trg.Parent) < 0)
                         {
-                            if (CheckTrigger(trg))
+                            if (trg.Parent.Conditions.IsCompatibleWith(CurConditions, new { rule = CurPiece.Rule?.Name }))
                             {
-                                CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
-                                WinnerTrigger(trg);
-                                noTriggersMatch = false;
+                                if (CheckTrigger(trg))
+                                {
+                                    CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
+                                    WinnerTrigger(trg);
+                                    noTriggersMatch = false;
+                                }
+                            }
+                            else
+                            {
+                                ignoredRules.Add(trg.Parent);
                             }
                         }
-                        else
+
+                        // Special: NoTriggersActivated
+                        if (noTriggersMatch)
                         {
-                            ignoredRules.Add(trg.Parent);
+                            var winTrg = Triggers.Where(t => t.Special == Special.NoTriggersActivated).FirstOrDefault();
+                            if (winTrg != null)
+                                WinnerTrigger(winTrg);
+
                         }
-                    }
-
-                    // Special: NoTriggersActivated
-                    if (noTriggersMatch)
-                    {
-                        var winTrg = Triggers.Where(t => t.Special == Special.NoTriggersActivated).FirstOrDefault();
-                        if (winTrg != null)
-                            WinnerTrigger(winTrg);
-
                     }
                 }
             }
@@ -112,6 +116,7 @@ namespace FractalMachineLib
 
         public class Trigger
         {
+            public bool Enabled = true;
             public Interpreter.Rule Parent;
             public string Str = "";
             public Utils.Callbacks<Reader> Checkers = new Utils.Callbacks<Reader>();

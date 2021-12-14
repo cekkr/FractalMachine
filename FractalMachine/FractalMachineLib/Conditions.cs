@@ -48,6 +48,8 @@ namespace FractalMachineLib
                     switch (v)
                     {
                         case Status.Toggle:
+                            bool b;
+                            //if(!Dict.TryGetValue())
 
                             break;
                     }

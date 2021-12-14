@@ -57,10 +57,15 @@ namespace FractalMachineLib
             ///
             // proof of concept
             var ruleString = NewRule("string");
-            var trgString = ruleString.NewTrigger();
-            trgString.Str = "'";
+            var trgString = ruleString.NewTrigger("'");
             // works on conditions
             ruleString.Conditions["!string"] = Conditions.Status.Toggle;
+
+            ///
+            /// Blocks
+            ///
+            var ruleBlock = NewRule(new Rule.Container(this), "block");
+            var trgBlock = ruleString.NewTrigger();
         }
 
         void Interpret(string Str)
@@ -76,11 +81,18 @@ namespace FractalMachineLib
             return rule;
         }
 
+        public Rule NewRule(Rule rule, string Name = "")
+        {
+            Rules.Add(rule);
+            if (!String.IsNullOrEmpty(Name)) rule.Name = Name;
+            return rule;
+        }
+
         public class Rule
         {
             public string Name;
             public Interpreter MyInter;
-            public Conditions Conditions;            
+            public Conditions Conditions = new Conditions();            
 
             public Utils.Callbacks<Reader.Trigger> OnWinner = new Utils.Callbacks<Reader.Trigger>();
 
@@ -103,6 +115,68 @@ namespace FractalMachineLib
                 trg.Special = cliche;
                 return trg;
             }
+
+            #region Particulars
+
+            public class Container : Rule
+            {
+                public Container(Interpreter Inter) : base(Inter) { }
+
+                public Reader.Trigger NewTriggers(string Open, string Close=null)
+                {                    
+                    if (Close == null)
+                        Close = Open;
+
+                    Conditions["$container" + Open + Close] = true;
+
+                    Reader.Trigger trgOp = base.NewTrigger(Open);
+                    Reader.Trigger trgCl = trgOp;
+
+                    if (Open != Close)
+                    {
+                        trgCl = NewTrigger(Close);
+                        trgCl.Enabled = false;
+                    }
+
+                    int opened = 0;
+
+                    OnWinner.Add(delegate (Reader.Trigger trg)
+                    {
+                        if(trgOp == trgCl)
+                        {
+                            if(opened == 0)
+                            {
+
+                                opened = 1;
+                            }
+                            else
+                            {
+
+                                opened = 0;
+                            }
+                        }
+                        else
+                        {
+                            if(trg == trgOp)
+                            {
+                                opened++;
+                                trgCl.Enabled = true;
+                            }
+                            else
+                            {
+                                if (--opened == 0)
+                                    trgCl.Enabled = false;
+                            }
+                        }
+
+                        return false;
+                    });
+
+                    return trgOp;
+                }
+            }
+
+            #endregion
 
         }
     }
