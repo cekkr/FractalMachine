@@ -146,12 +146,10 @@ namespace FractalMachineLib
                         {
                             if(opened == 0)
                             {
-
                                 opened = 1;
                             }
                             else
                             {
-
                                 opened = 0;
                             }
                         }
@@ -169,7 +167,7 @@ namespace FractalMachineLib
                             }
                         }
 
-                        return false;
+                        return true;
                     });
 
                     return trgOp;

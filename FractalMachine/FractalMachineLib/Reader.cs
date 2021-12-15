@@ -78,7 +78,12 @@ namespace FractalMachineLib
 
         void WinnerTrigger(Trigger trg)
         {
-            trg.Parent.OnWinner.Call(trg);
+            if (trg.Parent.OnWinner.Call(trg))
+            {
+                CurConditions.ApplyConditionFrom(trg.Conditions);
+            }
+
+            CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
         }
 
         #endregion
