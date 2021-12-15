@@ -21,8 +21,10 @@ namespace FractalMachineLib
         public char CurCh = '\0';
         public string CurStr;
         public int CurPos;
+        public int CurCol = 0, CurRow = 0;
         public Conditions CurConditions;        
         public Piece CurPiece;
+        public Trigger CurTrigger;
 
         public void Read(string Str)
         {
@@ -30,7 +32,7 @@ namespace FractalMachineLib
             CurConditions = new Conditions();
 
             List<Piece> Pieces = new List<Piece>();
-            CurPiece = new Piece();
+            CurPiece = new Piece(CurRow, CurCol);
 
             // Make sure that triggers are well ordered
             Triggers = Triggers.OrderByDescending(o => o.Str.Length).ToList();
@@ -55,6 +57,7 @@ namespace FractalMachineLib
                                     CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
                                     WinnerTrigger(trg);
                                     noTriggersMatch = false;
+                                    goto endOfTheLine;
                                 }
                             }
                             else
@@ -68,22 +71,47 @@ namespace FractalMachineLib
                         {
                             var winTrg = Triggers.Where(t => t.Special == Special.NoTriggersActivated).FirstOrDefault();
                             if (winTrg != null)
+                            {
                                 WinnerTrigger(winTrg);
-
+                                goto endOfTheLine;
+                            }
                         }
                     }
                 }
+
+                endOfTheLine:
+
+                // Check piece condition
+                if(CurTrigger != CurPiece.Trigger)
+                {
+                    Pieces.Add(CurPiece);
+                    CurPiece = new Piece(CurRow, CurCol);
+                    CurPiece.Trigger = CurTrigger;
+                }
+
+                CurPiece.Content += CurCh;
+
+                if (CurCh == '\n')
+                {
+                    CurCol = 0;
+                    CurRow++;
+                }
+                else
+                    CurRow++;
+                
             }
+
+            Pieces.Add(CurPiece);
         }
 
         void WinnerTrigger(Trigger trg)
         {
             if (trg.Parent.OnWinner.Call(trg))
             {
+                CurTrigger = trg;
                 CurConditions.ApplyConditionFrom(trg.Conditions);
-            }
-
-            CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
+                CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
+            }            
         }
 
         #endregion
@@ -110,7 +138,15 @@ namespace FractalMachineLib
         {
             public Interpreter.Rule Rule;
             public string Content;
-            public int Line=0, Col=0;
+            public int Row=0, Col=0;
+
+            public Trigger Trigger;
+
+            public Piece(int Row, int Col)
+            {
+                this.Row = Row;
+                this.Col = Col;
+            }
         }
 
         public enum Special
