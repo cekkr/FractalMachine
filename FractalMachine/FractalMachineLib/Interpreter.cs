@@ -65,20 +65,26 @@ namespace FractalMachineLib
             trgStringEscape.Conditions["domain"] = "string";
             trgStringEscape.OnWinner.Add(delegate (Reader reader)
             {
-                //todo: check next character
+                reader.AppendToPiece(reader.Eat());
                 return true;
             });
 
             ///
             /// Blocks
             ///
-            var ruleBlock = NewRule(new Rule.Container(this), "block");
-            var trgBlock = ruleString.NewTrigger();
+            Rule.Container ruleBlock = (Rule.Container)NewRule(new Rule.Container(this), "block");
+            var trgBlock = ruleBlock.NewTriggers("{", "}");
+
+            ///
+            /// New Line
+            ///
+            Rule ruleLine = NewRule("newLine");
+            var trgNewLine = ruleLine.NewTrigger("\n");
         }
 
-        void Interpret(string Str)
+        public Reader.Piece Interpret(string Str)
         {
-            Reader.Read(Str);
+            return Reader.Read(Str);
         } 
 
         public Rule NewRule(string Name = "")
