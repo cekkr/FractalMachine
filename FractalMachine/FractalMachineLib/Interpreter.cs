@@ -59,7 +59,15 @@ namespace FractalMachineLib
             var ruleString = NewRule("string");
             var trgString = ruleString.NewTrigger("'");
             // works on conditions
-            ruleString.Conditions["!string"] = Conditions.Status.Toggle;
+            ruleString.Conditions["domain:string"] = Conditions.Status.Toggle;
+
+            var trgStringEscape = ruleString.NewTrigger("\\");
+            trgStringEscape.Conditions["domain"] = "string";
+            trgStringEscape.OnWinner.Add(delegate (Reader reader)
+            {
+                //todo: check next character
+                return true;
+            });
 
             ///
             /// Blocks

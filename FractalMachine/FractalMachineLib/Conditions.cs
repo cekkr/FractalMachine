@@ -11,8 +11,12 @@ namespace FractalMachineLib
         internal Dictionary<string, dynamic> Dict = new Dictionary<string, dynamic>();
         Conditions Parent;
 
-        public Conditions() { }
-        public Conditions(Conditions parent)
+        public Conditions() 
+        {
+            this["domain"] = "base";
+        }
+
+        public Conditions(Conditions parent) : base()
         {
             Parent = parent;
         }

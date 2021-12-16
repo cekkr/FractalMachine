@@ -50,7 +50,8 @@ namespace FractalMachineLib
                         // serve a: boh (approfondisci)
                         if (ignoredRules.IndexOf(trg.Parent) < 0)
                         {
-                            if (trg.Parent.Conditions.IsCompatibleWith(CurConditions, new { rule = CurPiece.Rule?.Name }))
+                            // trg.Parent.Conditions.IsCompatibleWith(CurConditions, new { rule = CurPiece.Rule?.Name })
+                            if (trg.IsCompatibleWith(CurConditions))
                             {
                                 if (CheckTrigger(trg))
                                 {
@@ -106,7 +107,7 @@ namespace FractalMachineLib
 
         void WinnerTrigger(Trigger trg)
         {
-            if (trg.Parent.OnWinner.Call(trg))
+            if (trg.OnWinner.Call(this) && trg.Parent.OnWinner.Call(trg))
             {
                 CurTrigger = trg;
                 CurConditions.ApplyConditionFrom(trg.Conditions);
@@ -160,6 +161,7 @@ namespace FractalMachineLib
             public bool Enabled = true;
             public Interpreter.Rule Parent;
             public string Str = "";
+            public Utils.Callbacks<Reader> OnWinner = new Utils.Callbacks<Reader>();
             public Utils.Callbacks<Reader> Checkers = new Utils.Callbacks<Reader>();
             public Special Special = Special.None;
             public Conditions Conditions = new Conditions();
@@ -167,6 +169,11 @@ namespace FractalMachineLib
             public Trigger(Interpreter.Rule parent)
             {
                 Parent = parent;
+            }
+
+            public bool IsCompatibleWith(Conditions From)
+            {
+                return Conditions.IsCompatibleWith(From) && Parent.Conditions.IsCompatibleWith(From);
             }
         }
     }
