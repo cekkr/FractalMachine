@@ -130,7 +130,7 @@ namespace FractalMachineLib
 
         void WinnerTrigger(Trigger trg)
         {
-            if (trg.OnWinner.Call(this) && trg.Parent.OnWinner.Call(trg))
+            if (trg.OnWinner.CallIfNotEmpty(this) && trg.Parent.OnWinner.CallIfNotEmpty(trg))
             {
                 CurTrigger = trg;
                 CurConditions.ApplyConditionFrom(trg.Conditions);
@@ -154,8 +154,16 @@ namespace FractalMachineLib
 
         public bool CheckString(string Str)
         {
-            // continue here
-            return false;
+            if (Str.Length + CurPos >= CurStr.Length)
+                return false;
+
+            for(int i=0; i<Str.Length; i++)
+            {
+                if (Str[i] != CurStr[CurPos + i])
+                    return false;
+            }
+
+            return true;
         }
 
         public class Piece

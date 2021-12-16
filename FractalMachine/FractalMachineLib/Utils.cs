@@ -29,6 +29,14 @@ namespace FractalMachineLib
 
                 return false;
             }
+
+            public bool CallIfNotEmpty(T Caller)
+            {
+                if (List.Count == 0)
+                    return true;
+
+                return Call(Caller);
+            }
         }
 
         public class JObject : DynamicObject
