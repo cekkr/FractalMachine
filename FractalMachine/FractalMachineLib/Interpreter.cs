@@ -80,6 +80,13 @@ namespace FractalMachineLib
             ///
             Rule ruleLine = NewRule("newLine");
             var trgNewLine = ruleLine.NewTrigger("\n");
+
+            ///
+            /// Operands
+            ///
+            Rule ruleOperand = NewRule("operand"); // think on: op << x = 2
+            Rule leftOperand = ruleOperand.NewSubRule("left"); // priority to the left ex: 1 + 2 >> test
+            Rule rightOperand = ruleOperand.NewSubRule("right"); // priority to the right: test = 1 + 2
         }
 
         public Reader.Piece Interpret(string Str)
@@ -110,9 +117,26 @@ namespace FractalMachineLib
 
             public Utils.Callbacks<Reader.Trigger> OnWinner = new Utils.Callbacks<Reader.Trigger>();
 
+            public Rule Parent;
+            public List<Rule> SubRules = new List<Rule>();
+
             public Rule(Interpreter Inter)
             {
                 MyInter = Inter;
+            }
+
+            public Rule(Rule Subrule) 
+            {
+                Parent = Subrule;
+                MyInter = Parent.MyInter;
+            }
+
+            public Rule NewSubRule(string name)
+            {
+                var rule = new Rule(this);
+                rule.Name = name;
+                SubRules.Add(rule);
+                return rule;
             }
 
             public Reader.Trigger NewTrigger(string Str = "")

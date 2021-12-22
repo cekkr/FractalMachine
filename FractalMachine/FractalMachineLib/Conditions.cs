@@ -36,6 +36,10 @@ namespace FractalMachineLib
 
         public bool IsCompatibleWith(Conditions conds, dynamic dogmas = null)
         {
+            // Check manually the domain
+            if (this["domain"] != conds["domain"])
+                return false;
+
             return true;
         }
 
@@ -52,8 +56,8 @@ namespace FractalMachineLib
                     switch (v)
                     {
                         case Status.Toggle:
-                            bool b;
-                            //if(!Dict.TryGetValue())
+                            var pr = vk.Key.Split(':');
+                            this[pr[0]] = pr[1];
 
                             break;
                     }
