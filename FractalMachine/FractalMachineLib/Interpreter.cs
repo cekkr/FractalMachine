@@ -85,13 +85,21 @@ namespace FractalMachineLib
             /// Operands
             ///
             Rule ruleOperand = NewRule("operand"); // think on: op << x = 2
-            Rule leftOperand = ruleOperand.NewSubRule("left"); // priority to the left ex: 1 + 2 >> test
-            Rule rightOperand = ruleOperand.NewSubRule("right"); // priority to the right: test = 1 + 2
+            //Rule leftOperand = ruleOperand.NewSubRule("left"); // priority to the left ex: 1 + 2 >> test
+            //Rule rightOperand = ruleOperand.NewSubRule("right"); // priority to the right: test = 1 + 2
+
+            var trgAssign = ruleOperand.NewTrigger("=");
+            var trgPlus = ruleOperand.NewTrigger("+");
+            var trgMinus = ruleOperand.NewTrigger("-");
         }
 
         public Reader.Piece Interpret(string Str)
         {
-            return Reader.Read(Str);
+            var piece = Reader.Read(Str);
+
+            // time to interpret
+
+            return piece;
         } 
 
         public Rule NewRule(string Name = "")
