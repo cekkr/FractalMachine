@@ -106,15 +106,18 @@ namespace FractalMachineLib
         #region LinearGenerator
 
         //todo redesign this
+        internal Linear CurLinear = null;
 
         public Linear GetLinear(Reader.Piece piece)
         {
-            var lin = new Linear();
+            var plin = CurLinear;
+            var lin = CurLinear = new Linear();
             lin.Piece = piece;
 
             foreach (var p in piece.Pieces)
                 lin.Instructions.Add(GetLinear(p));
 
+            CurLinear = plin;
             return lin;
         }
 
