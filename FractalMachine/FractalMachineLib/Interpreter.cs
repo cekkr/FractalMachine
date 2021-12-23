@@ -98,9 +98,27 @@ namespace FractalMachineLib
             var piece = Reader.Read(Str);
 
             // time to interpret
+            var lin = GetLinear(piece);
 
             return piece;
-        } 
+        }
+
+        #region LinearGenerator
+
+        //todo redesign this
+
+        public Linear GetLinear(Reader.Piece piece)
+        {
+            var lin = new Linear();
+            lin.Piece = piece;
+
+            foreach (var p in piece.Pieces)
+                lin.Instructions.Add(GetLinear(p));
+
+            return lin;
+        }
+
+        #endregion
 
         public Rule NewRule(string Name = "")
         {
