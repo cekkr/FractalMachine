@@ -211,6 +211,8 @@ namespace FractalMachineLib
             public Special Special = Special.None;
             public Conditions Conditions = new Conditions();
 
+            public Utils.Callbacks<Linear> Interpreters = new Utils.Callbacks<Linear>();
+
             public Trigger(Interpreter.Rule parent)
             {
                 Parent = parent;

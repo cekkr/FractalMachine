@@ -91,6 +91,11 @@ namespace FractalMachineLib
             var trgAssign = ruleOperand.NewTrigger("=");
             var trgPlus = ruleOperand.NewTrigger("+");
             var trgMinus = ruleOperand.NewTrigger("-");
+
+            ///
+            /// Let's interpret 
+            ///
+
         }
 
         public Reader.Piece Interpret(string Str)
@@ -110,15 +115,36 @@ namespace FractalMachineLib
 
         public Linear GetLinear(Reader.Piece piece)
         {
-            var plin = CurLinear;
+            //var plin = CurLinear;
             var lin = CurLinear = new Linear();
             lin.Piece = piece;
 
-            foreach (var p in piece.Pieces)
-                lin.Instructions.Add(GetLinear(p));
+            /*if (plin != null)
+            {
+                lin.Parent = plin;
+                plin.Instructions.Add(lin);
+            }*/
 
-            CurLinear = plin;
+            // Cycle content
+            /*foreach (var p in piece.Pieces)
+                GetLinear(p);*/
+
+            // Let's analyze!
+            InterpretPiece(piece);
+
+            // End
+            //CurLinear = plin;
             return lin;
+        }
+
+        public void InterpretPiece(Reader.Piece piece)
+        {
+            foreach (var p in piece.Pieces)
+                InterpretPiece(p);
+
+            // Let's analyze!
+            piece.Trigger?.Interpreters.Call(CurLinear);
+            piece.Trigger?.Parent?.Interpreters.Call(CurLinear);
         }
 
         #endregion
@@ -148,6 +174,8 @@ namespace FractalMachineLib
 
             public Rule Parent;
             public List<Rule> SubRules = new List<Rule>();
+
+            public Utils.Callbacks<Linear> Interpreters = new Utils.Callbacks<Linear>();
 
             public Rule(Interpreter Inter)
             {

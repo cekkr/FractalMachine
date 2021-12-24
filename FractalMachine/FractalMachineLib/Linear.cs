@@ -8,6 +8,7 @@ namespace FractalMachineLib
 {
     public class Linear
     {
+        public Linear Parent = null;
         public List<Linear> Instructions = new List<Linear>();
         public List<Reader.Piece> Arguments = new List<Reader.Piece>();
 
