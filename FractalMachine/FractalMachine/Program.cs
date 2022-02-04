@@ -10,7 +10,7 @@ namespace FractalMachine
         {
             Console.WriteLine("Hello World!");
 
-            var code = File.ReadAllText("test.ula");
+            var code = File.ReadAllText("../../../Assets/test.ula");
             var inter = new Interpreter();
             var res = inter.Interpret(code);
 

@@ -9,4 +9,10 @@
     <ProjectReference Include="..\FractalMachineLib\FractalMachineLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
 </Project>
