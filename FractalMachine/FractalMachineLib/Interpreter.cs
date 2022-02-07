@@ -53,6 +53,18 @@ namespace FractalMachineLib
             });
 
             ///
+            /// Not word
+            ///
+            var notWord = NewRule("notWord");
+            var notWordTrgs = notWord.NewTrigger();
+
+            notWordTrgs.Checkers.Add(delegate (Reader reader)
+            {
+                var ch = reader.CurCh;
+                return !(Chars.IsLecter(ch) || Chars.IsNumber(ch));
+            });
+
+            ///
             /// String
             ///
             // proof of concept
