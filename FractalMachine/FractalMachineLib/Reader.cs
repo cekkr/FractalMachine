@@ -26,7 +26,7 @@ namespace FractalMachineLib
         public Piece CurPiece;
         public Trigger CurTrigger;
 
-        public Piece Read(string Str)
+        public Piece Read(ref string Str)
         {
             CurStr = Str;
             CurConditions = new Conditions();

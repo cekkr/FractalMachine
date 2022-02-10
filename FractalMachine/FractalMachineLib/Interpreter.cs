@@ -112,7 +112,7 @@ namespace FractalMachineLib
 
         public Reader.Piece Interpret(string Str)
         {
-            var piece = Reader.Read(Str);
+            var piece = Reader.Read(ref Str);
 
             // time to interpret
             var lin = GetLinear(piece);
