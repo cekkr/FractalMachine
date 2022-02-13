@@ -14,7 +14,7 @@ namespace FractalMachine
             var inter = new Interpreter();
             var res = inter.Interpret(code);
 
-            Console.WriteLine();
+             Console.WriteLine();
         }
     }
 }
