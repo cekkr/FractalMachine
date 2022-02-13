@@ -53,6 +53,18 @@ namespace FractalMachineLib
             });
 
             ///
+            /// Not word
+            ///
+            var notWord = NewRule("notWord");
+            var notWordTrgs = notWord.NewTrigger();
+
+            notWordTrgs.Checkers.Add(delegate (Reader reader)
+            {
+                var ch = reader.CurCh;
+                return !(Chars.IsLecter(ch) || Chars.IsNumber(ch));
+            });
+
+            ///
             /// String
             ///
             // proof of concept
@@ -100,7 +112,7 @@ namespace FractalMachineLib
 
         public Reader.Piece Interpret(string Str)
         {
-            var piece = Reader.Read(Str);
+            var piece = Reader.Read(ref Str);
 
             // time to interpret
             var lin = GetLinear(piece);

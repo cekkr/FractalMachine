@@ -9,7 +9,7 @@ using static FractalMachineLib.Utils;
 namespace FractalMachineLib
 {
     public class Reader
-    {        
+    {
         public Reader()
         {
         }
@@ -26,7 +26,7 @@ namespace FractalMachineLib
         public Piece CurPiece;
         public Trigger CurTrigger;
 
-        public Piece Read(string Str)
+        public Piece Read(ref string Str)
         {
             CurStr = Str;
             CurConditions = new Conditions();
@@ -82,7 +82,7 @@ namespace FractalMachineLib
                 endOfTheLine:
 
                 // Check piece condition
-                if(CurTrigger != CurPiece.Trigger)
+                if(CurTrigger != CurPiece.Trigger) //todo: change concept
                 {
                     CurPiece = CurPiece.Add(CurRow, CurCol);
                     CurPiece.Trigger = CurTrigger;
@@ -132,6 +132,8 @@ namespace FractalMachineLib
         {
             if (trg.OnWinner.CallIfNotEmpty(this) && trg.Parent.OnWinner.CallIfNotEmpty(trg))
             {
+                trg.LastPos = CurPos;
+
                 CurTrigger = trg;
                 CurConditions.ApplyConditionFrom(trg.Conditions);
                 CurConditions.ApplyConditionFrom(trg.Parent.Conditions);
@@ -212,6 +214,8 @@ namespace FractalMachineLib
             public Conditions Conditions = new Conditions();
 
             public Utils.Callbacks<Linear> Interpreters = new Utils.Callbacks<Linear>();
+
+            public int LastPos = 0;
 
             public Trigger(Interpreter.Rule parent)
             {
