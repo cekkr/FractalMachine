@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalMachine", "FractalMachine\FractalMachine.csproj", "{96F74211-7B6C-4709-A304-E910895D0605}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FractalMachine", "FractalMachine\FractalMachine.csproj", "{96F74211-7B6C-4709-A304-E910895D0605}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalMachineLib", "FractalMachineLib\FractalMachineLib.csproj", "{B184D945-778C-4652-895A-EDDE92D5748D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FractalMachineLib", "FractalMachineLib\FractalMachineLib.csproj", "{B184D945-778C-4652-895A-EDDE92D5748D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
